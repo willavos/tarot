@@ -14,6 +14,7 @@ function App() {
     startReading,
     question,
     isReadingStarted,
+    maxCards,
     isReadingComplete,
   } = useTarotDeck();
 
@@ -54,22 +55,25 @@ function App() {
       <AnimatePresence mode="wait">
         {!isReadingStarted && <QuestionForm onSubmit={startReading} />}
       </AnimatePresence>
-
       <div className="relative">
         <AnimatePresence mode="wait">
-          {isReadingStarted && !isReadingComplete && (
+          {isReadingStarted && (
             <TarotSpread
               deck={deck}
               onCardClick={drawCard}
               drawnPositions={drawnCards.map((card) => card.position)}
+              maxCards={maxCards}
             />
           )}
         </AnimatePresence>
 
         <AnimatePresence>
           {drawnCards.length > 0 && (
-            <div className="fixed bottom-0 left-0 w-full pb-8 px-8">
-              <Reading drawnCards={drawnCards} />
+            <div className="fixed bottom-0 left-0 w-full">
+              <Reading
+                drawnCards={drawnCards}
+                isReadingComplete={isReadingComplete}
+              />
             </div>
           )}
         </AnimatePresence>

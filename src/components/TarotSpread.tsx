@@ -19,6 +19,7 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
   deck,
   onCardClick,
   drawnPositions,
+  maxCards,
 }) => {
   // Calculate card positions once and memoize them
   const cardPositions = useMemo(() => {
@@ -67,6 +68,10 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
         const position = isDrawn
           ? getReadingPosition(index)
           : cardPositions[index];
+
+        if (drawnPositions.length === maxCards && !isDrawn) {
+          return <></>;
+        }
 
         return (
           <motion.div
