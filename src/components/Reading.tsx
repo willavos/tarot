@@ -49,6 +49,16 @@ export const Reading: React.FC<ReadingProps> = ({
               {card.reversed && (
                 <span className="text-red-400 text-sm">(Reversed)</span>
               )}
+              {card.arcana === "major" && (
+                <span className="ml-2 relative group cursor-help">
+                  <span className="inline-flex items-center justify-center w-5 h-5 bg-yellow-500 rounded-full text-xs font-bold text-purple-900">
+                    M
+                  </span>
+                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Major Arcana
+                  </span>
+                </span>
+              )}
             </div>
             <p className="text-purple-200 mb-2">
               {card.reversed ? card.reversedMeaning : card.uprightMeaning}

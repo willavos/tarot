@@ -26,13 +26,13 @@ export const Card: React.FC<CardProps> = ({ card, isFlipped, onClick }) => {
       }}
       style={{
         transformStyle: "preserve-3d",
-        rotateZ: card.reversed ? 180 : 0,
+        rotateZ: card.reversed ? 0 : 180, // todo: fixme
       }}
     >
       <div className="absolute w-full h-full backface-hidden">
         <div className="w-full h-full bg-purple-900 rounded-lg border-2 border-gold p-2">
           <div className="w-full h-full bg-purple-800 rounded-lg flex items-center justify-center">
-            <span className="text-gold text-2xl">✧</span>
+            <span className="text-gold text-3xl">✧</span>
           </div>
         </div>
       </div>
