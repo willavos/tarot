@@ -1,22 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import type { TarotCard } from "../types/tarot";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 interface ReadingProps {
   drawnCards: Array<TarotCard>;
+  isReadingComplete: boolean;
 }
 
-export const Reading: React.FC<ReadingProps> = ({ drawnCards }) => {
+export const Reading: React.FC<ReadingProps> = ({
+  drawnCards,
+  isReadingComplete,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   if (drawnCards.length === 0) return null;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-purple-900 rounded-lg p-6 max-w-2xl mx-auto mt-8"
+      initial={{ y: "100%" }}
+      animate={{
+        y: isReadingComplete || isExpanded ? 0 : "calc(100% - 60px)",
+      }}
+      className="fixed bottom-0 left-0 w-full bg-purple-900 rounded-t-lg shadow-lg"
+      style={{ maxHeight: "80vh", overflowY: "auto" }}
     >
-      <h2 className="text-2xl font-bold text-white mb-4">Your Reading</h2>
-      <div className="space-y-6">
+      <div
+        className="p-4 cursor-pointer flex justify-between items-center"
+        onClick={() => !isReadingComplete && setIsExpanded(!isExpanded)}
+      >
+        <h2 className="text-2xl font-bold text-white">
+          Your Reading ({drawnCards.length} cards)
+        </h2>
+        {!isReadingComplete && (isExpanded ? <ChevronDown /> : <ChevronUp />)}
+      </div>
+
+      <div className="p-6 space-y-6">
         {drawnCards.map((card, index) => (
           <motion.div
             key={`${card.name}-${index}`}
