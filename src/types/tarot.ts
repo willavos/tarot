@@ -7,5 +7,5 @@ export interface TarotCard {
   uprightMeaning: string;
   reversedMeaning: string;
   description: string;
-  reversed: boolean;
+  reversed?: boolean;
 }

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "./Card";
 import type { TarotCard } from "../types/tarot";
@@ -16,38 +16,63 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
   drawnPositions,
   maxCards,
 }) => {
-  // Calculate card positions once and memoize them
-  const cardPositions = useMemo(() => {
-    return deck.map((card) => {
-      const centerX = window.innerWidth * 0.5;
-      const centerY = window.innerHeight * 0.4;
-      const spreadRadius = Math.min(window.innerWidth * 0.3, 300);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
-      const randomAngle = Math.random() * Math.PI * 2;
-      const randomRadius = Math.random() * spreadRadius;
-      const x = Math.cos(randomAngle) * randomRadius;
-      const y = Math.sin(randomAngle) * randomRadius;
+  // Update window dimensions when resized
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Calculate random offsets once and never change them
+  const randomOffsets = useMemo(() => {
+    return deck.map(() => ({
+      angle: Math.random() * Math.PI * 2,
+      radius: Math.random(),
+      rotation: Math.random() * 360,
+    }));
+  }, [deck]);
+
+  // Calculate final positions based on random offsets and window size
+  const cardPositions = useMemo(() => {
+    return deck.map((_, index) => {
+      const centerX = windowSize.width * 0.5;
+      const centerY = windowSize.height * 0.4;
+      const spreadRadius = Math.min(windowSize.width * 0.3, 300);
+
+      const offset = randomOffsets[index];
+      const x = Math.cos(offset.angle) * (offset.radius * spreadRadius);
+      const y = Math.sin(offset.angle) * (offset.radius * spreadRadius);
 
       return {
-        x: centerX + x - 64, // Half card width
-        y: centerY + y - 96, // Half card height
-        rotation: Math.random() * 360,
-        inverted: card.reversed,
+        x: centerX + x - 64,
+        y: centerY + y - 96,
+        rotation: offset.rotation,
       };
     });
-  }, []); // Empty dependency array means this only runs once
+  }, [deck, windowSize, randomOffsets]);
 
   const getReadingPosition = (index: number) => {
-    const baseX = window.innerWidth * 0.5;
+    const baseX = windowSize.width * 0.5;
     // const baseY = window.innerHeight * 0.8;
     const spacing = 180; // Space between cards in reading
-    const offset = (drawnPositions.length - 1) * spacing * -0.5;
+    const offset = drawnPositions.length * spacing * -0.5;
     const position = drawnPositions.indexOf(index);
 
     return {
-      x: baseX + offset + position * spacing - 64,
+      x: baseX + offset + position * spacing,
       y: 0,
-      rotation: cardPositions[index].inverted ? 180 : 0,
+      rotation: deck[index] ? 180 : 0,
     };
   };
 
@@ -65,7 +90,7 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
           : cardPositions[index];
 
         if (drawnPositions.length === maxCards && !isDrawn) {
-          return <></>;
+          return null;
         }
 
         return (
@@ -91,7 +116,6 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
             <Card
               card={card}
               isFlipped={isDrawn}
-              isInverted={position.inverted}
               onClick={() => !isDrawn && onCardClick(index)}
               index={index}
             />

@@ -5,18 +5,11 @@ import type { TarotCard } from "../types/tarot";
 interface CardProps {
   card: TarotCard;
   isFlipped: boolean;
-  isInverted: boolean;
   onClick: () => void;
   index: number;
 }
 
-export const Card: React.FC<CardProps> = ({
-  card,
-  isFlipped,
-  isInverted,
-  onClick,
-  index,
-}) => {
+export const Card: React.FC<CardProps> = ({ card, isFlipped, onClick }) => {
   return (
     <motion.div
       className="relative w-32 h-48 cursor-pointer"
@@ -33,7 +26,7 @@ export const Card: React.FC<CardProps> = ({
       }}
       style={{
         transformStyle: "preserve-3d",
-        rotateZ: isInverted ? 180 : 0,
+        rotateZ: card.reversed ? 180 : 0,
       }}
     >
       <div className="absolute w-full h-full backface-hidden">
