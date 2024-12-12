@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import type { TarotCard } from '../types/tarot';
+import React from "react";
+import { motion } from "framer-motion";
+import type { TarotCard } from "../types/tarot";
 
 interface ReadingProps {
-  drawnCards: Array<TarotCard & { isReversed: boolean }>;
+  drawnCards: Array<TarotCard>;
 }
 
 export const Reading: React.FC<ReadingProps> = ({ drawnCards }) => {
@@ -27,12 +27,12 @@ export const Reading: React.FC<ReadingProps> = ({ drawnCards }) => {
           >
             <div className="flex items-center gap-2 mb-2">
               <h3 className="text-xl font-semibold text-white">{card.name}</h3>
-              {card.isReversed && (
+              {card.reversed && (
                 <span className="text-red-400 text-sm">(Reversed)</span>
               )}
             </div>
             <p className="text-purple-200 mb-2">
-              {card.isReversed ? card.reversedMeaning : card.uprightMeaning}
+              {card.reversed ? card.reversedMeaning : card.uprightMeaning}
             </p>
             <p className="text-purple-300">{card.description}</p>
           </motion.div>

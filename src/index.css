@@ -11,15 +11,19 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .text-gold {
-  color: #FFD700;
+  color: #ffd700;
 }
 
 .border-gold {
-  border-color: #FFD700;
+  border-color: #ffd700;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
 }

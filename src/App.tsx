@@ -1,10 +1,9 @@
-import React from 'react';
-import { Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { TarotSpread } from './components/TarotSpread';
-import { Reading } from './components/Reading';
-import { QuestionForm } from './components/QuestionForm';
-import { useTarotDeck } from './hooks/useTarotDeck';
+import { Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { TarotSpread } from "./components/TarotSpread";
+import { Reading } from "./components/Reading";
+import { QuestionForm } from "./components/QuestionForm";
+import { useTarotDeck } from "./hooks/useTarotDeck";
 
 function App() {
   const {
@@ -15,13 +14,13 @@ function App() {
     startReading,
     question,
     isReadingStarted,
-    isReadingComplete
+    isReadingComplete,
   } = useTarotDeck();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white p-8">
       <header className="text-center mb-12">
-        <motion.h1 
+        <motion.h1
           className="text-4xl font-bold mb-4 flex items-center justify-center gap-2"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -30,15 +29,15 @@ function App() {
           Mystic Tarot
           <Sparkles className="w-8 h-8" />
         </motion.h1>
-        <motion.p 
+        <motion.p
           className="text-purple-200 mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          {isReadingStarted 
+          {isReadingStarted
             ? `Your Question: ${question}`
-            : 'Begin your journey into the mystic realm'}
+            : "Begin your journey into the mystic realm"}
         </motion.p>
         {!isReadingStarted && (
           <motion.button
@@ -53,26 +52,28 @@ function App() {
       </header>
 
       <AnimatePresence mode="wait">
-        {!isReadingStarted && (
-          <QuestionForm onSubmit={startReading} />
-        )}
+        {!isReadingStarted && <QuestionForm onSubmit={startReading} />}
       </AnimatePresence>
 
-      <AnimatePresence mode="wait">
-        {isReadingStarted && !isReadingComplete && (
-          <TarotSpread
-            deck={deck}
-            onCardClick={drawCard}
-            drawnPositions={drawnCards.map(card => card.position)}
-          />
-        )}
-      </AnimatePresence>
+      <div className="relative">
+        <AnimatePresence mode="wait">
+          {isReadingStarted && !isReadingComplete && (
+            <TarotSpread
+              deck={deck}
+              onCardClick={drawCard}
+              drawnPositions={drawnCards.map((card) => card.position)}
+            />
+          )}
+        </AnimatePresence>
 
-      <AnimatePresence>
-        {drawnCards.length > 0 && (
-          <Reading drawnCards={drawnCards} />
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {drawnCards.length > 0 && (
+            <div className="fixed bottom-0 left-0 w-full pb-8 px-8">
+              <Reading drawnCards={drawnCards} />
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
