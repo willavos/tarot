@@ -3,16 +3,11 @@ import { motion } from "framer-motion";
 import { Card } from "./Card";
 import type { TarotCard } from "../types/tarot";
 
-// interface CardPosition {
-//   x: number;
-//   y: number;
-//   rotation: number;
-// }
-
 interface TarotSpreadProps {
   deck: TarotCard[];
   onCardClick: (index: number) => void;
   drawnPositions: number[];
+  maxCards: number;
 }
 
 export const TarotSpread: React.FC<TarotSpreadProps> = ({
