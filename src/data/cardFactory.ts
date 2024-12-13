@@ -28,13 +28,12 @@ export const createSuit = (
 };
 
 export const createMajorArcana = (
-  cardData: Readonly<CardData>[],
+  cardData: Readonly<CardData[]>,
   imageUrlPattern: string,
 ): TarotCard[] => {
   return cardData.map((card) => ({
     name: card.name,
     nameNoSuit: card.name,
-    // number: card.number,
     arcana: "major" as const,
     // image: imageUrlPattern.replace("[N]", card.number.toString()),
     image: "https://picsum.photos/200/300",

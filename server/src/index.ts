@@ -19,7 +19,7 @@ const client = new Groq({
 // API endpoint for LLM (use Groq)
 app.post("/api/interpret-reading", async (req, res) => {
   try {
-    const { cards, question } = req.body;
+    const { prompt } = req.body;
 
     const completion = await client.chat.completions.create({
       messages: [
@@ -30,7 +30,7 @@ app.post("/api/interpret-reading", async (req, res) => {
         },
         {
           role: "user",
-          content: question,
+          content: prompt,
         },
       ],
       model: "llama3-8b-8192",

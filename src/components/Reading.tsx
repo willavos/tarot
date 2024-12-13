@@ -101,9 +101,17 @@ const SuitTooltip: React.FC<{ suit: string | undefined }> = ({ suit }) => {
   );
 };
 
-const handleGetInterpretation = async () => {
+const handleGetInterpretation = async (
+  chosenCards: TarotCard[],
+  question: string,
+  setInterpretation: React.Dispatch<React.SetStateAction<string>>,
+) => {
   try {
-    const cardNames = cards.map((card) => card.name);
+    // Extract the card names from the chosen cards
+    const cardNames = chosenCards.map(
+      (card) => card.name + (card.reversed ? " (reversed)" : ""),
+    );
+
     const interpretation = await interpretReading(cardNames, question);
     // Update your state with the interpretation
     setInterpretation(interpretation);
