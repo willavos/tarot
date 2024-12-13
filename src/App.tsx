@@ -73,6 +73,7 @@ function App() {
               <Reading
                 drawnCards={drawnCards}
                 isReadingComplete={isReadingComplete}
+                question={question}
               />
             </div>
           )}

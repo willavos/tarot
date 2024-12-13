@@ -1,19 +1,43 @@
-import React, { useState } from "react";
 import { motion } from "framer-motion";
 import type { TarotCard } from "../types/tarot";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, Sparkles, Loader } from "lucide-react";
 import { interpretReading } from "../services/tarotService";
+import { useEffect, useState } from "react";
 
 interface ReadingProps {
   drawnCards: Array<TarotCard>;
   isReadingComplete: boolean;
+  question: string;
 }
 
 export const Reading: React.FC<ReadingProps> = ({
   drawnCards,
   isReadingComplete,
+  question,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [interpretation, setInterpretation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function getInterpretation() {
+      if (isReadingComplete && drawnCards.length > 0) {
+        setIsLoading(true);
+        try {
+          const cardNames = drawnCards.map(
+            (card) => card.name + (card.reversed ? " (reversed)" : ""),
+          );
+          const result = await interpretReading(cardNames, question || "");
+          setInterpretation(result);
+        } catch (error) {
+          console.error("Error getting interpretation:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    }
+    getInterpretation();
+  }, [isReadingComplete, drawnCards, question]);
 
   if (drawnCards.length === 0) return null;
 
@@ -74,6 +98,42 @@ export const Reading: React.FC<ReadingProps> = ({
             <p className="text-purple-300">{card.description}</p>
           </motion.div>
         ))}
+
+        {/* Interpretation section */}
+        {isReadingComplete && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-8"
+          >
+            <div className="bg-gradient-to-r from-purple-700/30 to-indigo-700/30 rounded-lg p-6 backdrop-blur-sm border border-purple-500/20">
+              <h3 className="text-xl font-semibold text-white flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-yellow-400" />
+                Mystical Interpretation
+              </h3>
+
+              {isLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <Loader className="w-6 h-6 text-purple-300 animate-spin" />
+                  <span className="ml-3 text-purple-300">
+                    Consulting the cards...
+                  </span>
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
+                >
+                  <p className="text-purple-100 leading-relaxed whitespace-pre-line">
+                    {interpretation}
+                  </p>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
@@ -99,23 +159,4 @@ const SuitTooltip: React.FC<{ suit: string | undefined }> = ({ suit }) => {
       </span>
     </span>
   );
-};
-
-const handleGetInterpretation = async (
-  chosenCards: TarotCard[],
-  question: string,
-  setInterpretation: React.Dispatch<React.SetStateAction<string>>,
-) => {
-  try {
-    // Extract the card names from the chosen cards
-    const cardNames = chosenCards.map(
-      (card) => card.name + (card.reversed ? " (reversed)" : ""),
-    );
-
-    const interpretation = await interpretReading(cardNames, question);
-    // Update your state with the interpretation
-    setInterpretation(interpretation);
-  } catch (error) {
-    console.error("Error getting interpretation:", error);
-  }
 };

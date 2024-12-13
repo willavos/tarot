@@ -19,24 +19,18 @@ const client = new Groq({
 // API endpoint for LLM (use Groq)
 app.post("/api/interpret-reading", async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { system, prompt } = req.body;
 
     const completion = await client.chat.completions.create({
       messages: [
-        {
-          role: "system",
-          content:
-            "You are a knowledgeable tarot reader providing interpretations",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
+        { role: "system", content: system },
+        { role: "user", content: prompt },
       ],
-      model: "llama3-8b-8192",
+      // model: "llama3-8b-8192",
+      model: "llama-3.3-70b-versatile",
     });
 
-    console.log(completion.choices[0].message.content);
+    console.log("prompt", prompt);
 
     res.json({ interpretation: completion.choices[0].message?.content });
   } catch (error) {
