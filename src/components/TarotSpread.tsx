@@ -49,14 +49,17 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
       const centerX = windowSize.width * 0.5;
       const centerY = windowSize.height * 0.4;
       const spreadRadius = Math.min(windowSize.width * 0.3, 300);
+      const spreadAspectRatio = windowSize.width / windowSize.height;
 
       const offset = randomOffsets[index];
-      const x = Math.cos(offset.angle) * (offset.radius * spreadRadius);
+      const x =
+        Math.cos(offset.angle) *
+        (offset.radius * spreadRadius * spreadAspectRatio);
       const y = Math.sin(offset.angle) * (offset.radius * spreadRadius);
 
       return {
-        x: centerX + x - 64,
-        y: centerY + y - 96,
+        x: centerX + x - 64 - 32,
+        y: centerY + y,
         rotation: offset.rotation,
       };
     });

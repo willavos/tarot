@@ -16,11 +16,11 @@ export const createSuit = (
 ): TarotCard[] => {
   return cardData.map((card, index) => ({
     name: `${card.name} of ${suit.charAt(0).toUpperCase() + suit.slice(1)}`,
-    number: index + 1,
+    nameNoSuit: card.name,
     arcana: "minor" as const,
     suit,
     // image: imageUrlPattern.replace("[N]", (index + 1).toString()),
-    image: "https://picsum.photos/${800 + index}",
+    image: `https://picsum.photos/${800 + index}`,
     uprightMeaning: card.uprightMeaning,
     reversedMeaning: card.reversedMeaning,
     description: card.description,
@@ -33,6 +33,7 @@ export const createMajorArcana = (
 ): TarotCard[] => {
   return cardData.map((card) => ({
     name: card.name,
+    nameNoSuit: card.name,
     // number: card.number,
     arcana: "major" as const,
     // image: imageUrlPattern.replace("[N]", card.number.toString()),

@@ -12,7 +12,7 @@ export const useTarotDeck = () => {
     shuffleArray(fullTarotDeck),
   );
   const [drawnCards, setDrawnCards] = useState<DrawnCard[]>([]);
-  const [maxCards, setMaxCards] = useState<number | null>(null);
+  const [maxCards, setMaxCards] = useState<number>(3);
   const [question, setQuestion] = useState<string>("");
   const [isReadingStarted, setIsReadingStarted] = useState(false);
 
@@ -24,7 +24,7 @@ export const useTarotDeck = () => {
     setDeck(shuffleArray(reversedDeck));
     console.log("Deck shuffled", deck);
     setDrawnCards([]);
-    setMaxCards(null);
+    setMaxCards(3);
     setQuestion("");
     setIsReadingStarted(false);
   }, []);
@@ -44,7 +44,7 @@ export const useTarotDeck = () => {
         drawnCards.some((card) => card.position === index)
       )
         return;
-      if (maxCards !== null && drawnCards.length >= maxCards) return;
+      if (drawnCards.length >= maxCards) return;
 
       const card = deck[index];
       const isReversed = deck[index].reversed;

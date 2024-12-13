@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import type { TarotCard } from "../types/tarot";
 import { ChevronUp, ChevronDown } from "lucide-react";
+import { interpretReading } from "../services/tarotService";
 
 interface ReadingProps {
   drawnCards: Array<TarotCard>;
@@ -30,7 +31,8 @@ export const Reading: React.FC<ReadingProps> = ({
         onClick={() => !isReadingComplete && setIsExpanded(!isExpanded)}
       >
         <h2 className="text-2xl font-bold text-white">
-          Your Reading ({drawnCards.length} cards)
+          Your Reading ({drawnCards.length}{" "}
+          {drawnCards.length === 1 ? "card" : "cards"})
         </h2>
         {!isReadingComplete && (isExpanded ? <ChevronDown /> : <ChevronUp />)}
       </div>
@@ -45,7 +47,11 @@ export const Reading: React.FC<ReadingProps> = ({
             className="bg-purple-800 rounded-lg p-4"
           >
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-xl font-semibold text-white">{card.name}</h3>
+              <h3 className="text-xl font-semibold text-white">
+                {card.nameNoSuit}
+                {card.arcana === "minor" && " of"}
+                {card.arcana === "minor" && <SuitTooltip suit={card.suit} />}
+              </h3>
               {card.reversed && (
                 <span className="text-red-400 text-sm">(Reversed)</span>
               )}
@@ -60,7 +66,9 @@ export const Reading: React.FC<ReadingProps> = ({
                 </span>
               )}
             </div>
-            <p className="text-purple-200 mb-2">
+            <p
+              className={`${card.reversed ? "text-red-400" : "text-purple-200"} mb-2`}
+            >
               {card.reversed ? card.reversedMeaning : card.uprightMeaning}
             </p>
             <p className="text-purple-300">{card.description}</p>
@@ -69,4 +77,37 @@ export const Reading: React.FC<ReadingProps> = ({
       </div>
     </motion.div>
   );
+};
+
+const SuitTooltip: React.FC<{ suit: string | undefined }> = ({ suit }) => {
+  const suitMeanings: { [key: string]: string } = {
+    cups: "emotions, relationships, intuition",
+    wands: "passion, creativity, action",
+    swords: "thought, conflict, truth",
+    pentacles: "material world, work, money",
+  };
+
+  if (!suit) return null;
+
+  return (
+    <span className="relative group cursor-help ml-2">
+      <span className="border-b border-dashed">
+        {suit.charAt(0).toUpperCase() + suit.slice(1)}
+      </span>
+      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        {suitMeanings[suit.toLowerCase()]}
+      </span>
+    </span>
+  );
+};
+
+const handleGetInterpretation = async () => {
+  try {
+    const cardNames = cards.map((card) => card.name);
+    const interpretation = await interpretReading(cardNames, question);
+    // Update your state with the interpretation
+    setInterpretation(interpretation);
+  } catch (error) {
+    console.error("Error getting interpretation:", error);
+  }
 };

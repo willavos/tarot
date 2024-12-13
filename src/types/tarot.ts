@@ -1,6 +1,6 @@
 export interface TarotCard {
   name: string;
-  number?: number;
+  nameNoSuit: string;
   arcana: "major" | "minor";
   suit?: "wands" | "cups" | "swords" | "pentacles";
   image: string;
