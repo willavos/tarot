@@ -1,7 +1,28 @@
+import { UserInfo } from "../components/UserInfoForm";
+
 const system = "You are a knowledgeable tarot reader providing interpretations";
 
-const getPrompt = (cards: string[], question: string) => {
+const getPrompt = (
+  cards: string[],
+  question: string,
+  userInfo: UserInfo | undefined,
+) => {
+  let userContext = "";
+  if (userInfo) {
+    const name = userInfo.name;
+    const birthDate = userInfo.birthDate;
+    const zodiacSign = userInfo.zodiacSign;
+    const knowFuture = userInfo.knowFuture;
+    const otherInfo = userInfo.otherInfo;
+
+    const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+    userContext = `You are about to provide a tarot reading for ${name}, a ${age} year old ${zodiacSign}.
+${name} is ${knowFuture ? "" : "not "}interested in knowing their future.
+They also have shared some additional information, which they would like you to consider: "${otherInfo}".`;
+  }
+
   return `You are an experienced tarot reader providing an in-depth reading.
+${userContext}
 
 Question asked: "${question}"
 
@@ -21,7 +42,11 @@ Write only in text (no additional formatting!). You are allowed to use emojis to
 DO NOT RAMBLE! Give a 300 word response. If you go over, you will be penalized.`;
 };
 
-export const interpretReading = async (cards: string[], question: string) => {
+export const interpretReading = async (
+  cards: string[],
+  question: string,
+  userInfo: UserInfo | undefined,
+) => {
   if (!question) {
     throw new Error("Question is required");
   }
@@ -35,7 +60,7 @@ export const interpretReading = async (cards: string[], question: string) => {
         },
         body: JSON.stringify({
           system: system,
-          prompt: getPrompt(cards, question),
+          prompt: getPrompt(cards, question, userInfo),
         }),
       },
     );

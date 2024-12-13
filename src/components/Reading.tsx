@@ -3,17 +3,20 @@ import type { TarotCard } from "../types/tarot";
 import { ChevronUp, ChevronDown, Sparkles, Loader } from "lucide-react";
 import { interpretReading } from "../services/tarotService";
 import { useEffect, useState } from "react";
+import { UserInfo } from "./UserInfoForm";
 
 interface ReadingProps {
   drawnCards: Array<TarotCard>;
   isReadingComplete: boolean;
   question: string;
+  userInfo: UserInfo | undefined;
 }
 
 export const Reading: React.FC<ReadingProps> = ({
   drawnCards,
   isReadingComplete,
   question,
+  userInfo,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [interpretation, setInterpretation] = useState("");
@@ -27,7 +30,11 @@ export const Reading: React.FC<ReadingProps> = ({
           const cardNames = drawnCards.map(
             (card) => card.name + (card.reversed ? " (reversed)" : ""),
           );
-          const result = await interpretReading(cardNames, question || "");
+          const result = await interpretReading(
+            cardNames,
+            question || "",
+            userInfo,
+          );
           setInterpretation(result);
         } catch (error) {
           console.error("Error getting interpretation:", error);
@@ -37,7 +44,7 @@ export const Reading: React.FC<ReadingProps> = ({
       }
     }
     getInterpretation();
-  }, [isReadingComplete, drawnCards, question]);
+  }, [isReadingComplete, drawnCards, question, userInfo]);
 
   if (drawnCards.length === 0) return null;
 
