@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export interface UserInfo {
   name: string;
@@ -13,6 +13,8 @@ interface UserInfoFormProps {
   onComplete: (userInfo: UserInfo) => void;
 }
 
+const CHARACTER_LIMIT = 500;
+
 export function UserInfoForm({ onComplete }: UserInfoFormProps) {
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
@@ -21,6 +23,13 @@ export function UserInfoForm({ onComplete }: UserInfoFormProps) {
     knowFuture: false,
     otherInfo: "",
   });
+
+  const charactersRemaining = useMemo(
+    () => CHARACTER_LIMIT - userInfo.otherInfo.length,
+    [userInfo.otherInfo],
+  );
+
+  const isOverLimit = charactersRemaining < 0;
 
   useEffect(() => {
     const savedUserInfo = localStorage.getItem("userInfo");
@@ -31,6 +40,7 @@ export function UserInfoForm({ onComplete }: UserInfoFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isOverLimit) return;
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
     onComplete(userInfo);
   };
@@ -107,19 +117,41 @@ export function UserInfoForm({ onComplete }: UserInfoFormProps) {
         <label className="block text-purple-200 mb-2">
           Is there any other information you would like to share?
         </label>
-        <textarea
-          className="w-full p-2 rounded bg-purple-900/50 border border-purple-500"
-          rows={3}
-          value={userInfo.otherInfo}
-          onChange={(e) =>
-            setUserInfo({ ...userInfo, otherInfo: e.target.value })
-          }
-        ></textarea>
+        <div className="relative">
+          <textarea
+            className={`w-full p-2 rounded bg-purple-900/50 border ${
+              isOverLimit ? "border-red-500" : "border-purple-500"
+            }`}
+            rows={3}
+            maxLength={CHARACTER_LIMIT}
+            value={userInfo.otherInfo}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, otherInfo: e.target.value })
+            }
+          ></textarea>
+          <span
+            className={`absolute bottom-2 right-2 text-sm ${
+              isOverLimit ? "text-red-500" : "text-gray-400"
+            }`}
+          >
+            {charactersRemaining}
+          </span>
+        </div>
+        {isOverLimit && (
+          <p className="text-red-500 text-sm mt-1">
+            Text exceeds maximum length of {CHARACTER_LIMIT} characters
+          </p>
+        )}
       </div>
 
       <button
         type="submit"
-        className="w-full p-2 bg-purple-600 rounded hover:bg-purple-700 transition"
+        className={`w-full p-2 rounded transition ${
+          isOverLimit
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-purple-600 hover:bg-purple-700"
+        }`}
+        disabled={isOverLimit}
       >
         Begin Your Journey
       </button>

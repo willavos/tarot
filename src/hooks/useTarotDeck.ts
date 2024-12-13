@@ -22,7 +22,6 @@ export const useTarotDeck = () => {
       reversed: Math.random() < 0.5,
     }));
     setDeck(shuffleArray(reversedDeck));
-    console.log("Deck shuffled", deck);
     setDrawnCards([]);
     setMaxCards(3);
     setQuestion("");
@@ -34,6 +33,10 @@ export const useTarotDeck = () => {
     setQuestion(newQuestion);
     setMaxCards(cardCount);
     setIsReadingStarted(true);
+    setDrawnCards([]);
+  }, []);
+
+  const resetDeck = useCallback(() => {
     setDrawnCards([]);
   }, []);
 
@@ -67,6 +70,7 @@ export const useTarotDeck = () => {
     drawCard,
     shuffleDeck,
     startReading,
+    resetDeck,
     question,
     maxCards,
     isReadingStarted,

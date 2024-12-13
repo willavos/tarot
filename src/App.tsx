@@ -18,11 +18,11 @@ function App() {
   const {
     deck,
     drawnCards,
+    resetDeck,
     drawCard,
     shuffleDeck,
     startReading,
     question,
-    // isReadingStarted,
     maxCards,
     isReadingComplete,
   } = useTarotDeck();
@@ -67,9 +67,17 @@ function App() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Sparkles className="w-8 h-8" />
-          Mystic Tarot
-          <Sparkles className="w-8 h-8" />
+          <div
+            className="flex items-center justify-center cursor-pointer"
+            onClick={() => {
+              resetDeck();
+              setStage("question");
+            }}
+          >
+            <Sparkles className="w-8 h-8" />
+            Mystic Tarot
+            <Sparkles className="w-8 h-8" />
+          </div>
         </motion.h1>
         <motion.p
           className="text-purple-200 mb-4"

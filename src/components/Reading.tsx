@@ -55,7 +55,7 @@ export const Reading: React.FC<ReadingProps> = ({
         y: isReadingComplete || isExpanded ? 0 : "calc(100% - 60px)",
       }}
       className="fixed bottom-0 left-0 w-full bg-purple-900 rounded-t-lg shadow-lg"
-      style={{ maxHeight: "80vh", overflowY: "auto" }}
+      style={{ maxHeight: "calc(100% - 380px)", overflowY: "auto" }}
     >
       <div
         className="p-4 cursor-pointer flex justify-between items-center"
