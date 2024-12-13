@@ -39,8 +39,12 @@ Your persona is that of a wise and experienced tarot reader, not a friend or the
 Talk like a wise magus, not a millennial, avoid any modern slang.
 
 Write only in text (no additional formatting!). You are allowed to use emojis to enhance your response.
-DO NOT RAMBLE! Give a 300 word response. If you go over, you will be penalized.`;
+DO NOT RAMBLE! Give a 500 word response. If you go over, you will be penalized.
+
+Address the querent directly, and make sure you finish with a 'core message' , and guidane for the querent.`;
 };
+
+const theURL = "https://piss.dev";
 
 export const interpretReading = async (
   cards: string[],
@@ -51,19 +55,16 @@ export const interpretReading = async (
     throw new Error("Question is required");
   }
   try {
-    const response = await fetch(
-      "http://localhost:3000/api/interpret-reading",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          system: system,
-          prompt: getPrompt(cards, question, userInfo),
-        }),
+    const response = await fetch(theURL + "/api/interpret-reading", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        system: system,
+        prompt: getPrompt(cards, question, userInfo),
+      }),
+    });
 
     if (!response.ok) {
       console.error("Error:", response.statusText);
@@ -87,19 +88,16 @@ export const interpretReadingStream = async function* (
     throw new Error("Question is required");
   }
   try {
-    const response = await fetch(
-      "http://localhost:3000/api/interpret-reading-stream",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          system: system,
-          prompt: getPrompt(cards, question, userInfo),
-        }),
+    const response = await fetch(theURL + "/api/interpret-reading-stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        system: system,
+        prompt: getPrompt(cards, question, userInfo),
+      }),
+    });
 
     if (!response.ok) {
       console.error("Error:", response.statusText);

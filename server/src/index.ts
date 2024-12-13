@@ -16,6 +16,10 @@ const client = new Groq({
   apiKey: process.env["GROQ_API_KEY"],
 });
 
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API is working" });
+});
+
 // API endpoint for interpreting a tarot reading (fundamentally hitting Groq API)
 app.post("/api/interpret-reading", async (req, res) => {
   const { system, prompt } = req.body;
