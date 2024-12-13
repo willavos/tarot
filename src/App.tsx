@@ -1,6 +1,6 @@
 import { Sparkles, Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TarotSpread } from "./components/TarotSpread";
 import { Reading } from "./components/Reading";
 import { QuestionForm } from "./components/QuestionForm";
@@ -60,6 +60,20 @@ function App() {
     startReading(question, maxCards);
   };
 
+  const [isSparkling, setIsSparkling] = useState(false);
+
+  const handleTitleClick = (e: React.MouseEvent) => {
+    setIsSparkling(true);
+    console.log("Resetting reading...");
+    shuffleDeck();
+    setStage("question");
+
+    // Reset sparkle animation after it completes
+    setTimeout(() => {
+      setIsSparkling(false);
+    }, 3000);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-black text-white p-8">
       <button
@@ -76,15 +90,13 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
         >
           <div
-            className="flex items-center justify-center cursor-pointer"
-            onClick={() => {
-              console.log("Resetting reading...");
-              shuffleDeck();
-              setStage("question");
-            }}
+            className={`flex items-center justify-center cursor-pointer glow-effect ${
+              isSparkling ? "sparkle-animation" : ""
+            }`}
+            onClick={handleTitleClick}
           >
             <Sparkles className="w-8 h-8" />
-            Mystic Tarot
+            <span className="mx-2">Mystic Tarot</span>
             <Sparkles className="w-8 h-8" />
           </div>
         </motion.h1>
