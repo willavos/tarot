@@ -77,3 +77,67 @@ export const interpretReading = async (
     throw error;
   }
 };
+
+export const interpretReadingStream = async function* (
+  cards: string[],
+  question: string,
+  userInfo: UserInfo | undefined,
+) {
+  if (!question) {
+    throw new Error("Question is required");
+  }
+  try {
+    const response = await fetch(
+      "http://localhost:3000/api/interpret-reading-stream",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          system: system,
+          prompt: getPrompt(cards, question, userInfo),
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      console.error("Error:", response.statusText);
+      throw new Error("Error processing your request");
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error("No reader available");
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      // Convert the received chunks to text
+      const chunk = new TextDecoder().decode(value);
+      // Split by newlines in case multiple chunks arrived
+      const lines = chunk.split("\n");
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          try {
+            // Remove 'data: ' prefix and parse JSON
+            const jsonStr = line.replace("data: ", "");
+            const jsonData = JSON.parse(jsonStr);
+
+            // Yield just the content
+            if (jsonData.content) {
+              yield jsonData.content;
+            }
+          } catch (e) {
+            // Skip invalid JSON
+            console.warn("Failed to parse chunk:", line);
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};

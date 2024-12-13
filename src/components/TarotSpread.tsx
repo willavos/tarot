@@ -16,17 +16,29 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
   drawnPositions,
   maxCards,
 }) => {
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [windowSize, setWindowSize] = useState(() => ({
+    width:
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth,
+    height:
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      document.body.clientHeight,
+  }));
 
   // Update window dimensions when resized
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width:
+          window.innerWidth ||
+          document.documentElement.clientWidth ||
+          document.body.clientWidth,
+        height:
+          window.innerHeight ||
+          document.documentElement.clientHeight ||
+          document.body.clientHeight,
       });
     };
 
@@ -34,14 +46,20 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const [shuffleId, setShuffleId] = useState(0);
+  useEffect(() => {
+    setShuffleId((prev) => prev + 1);
+  }, [deck]);
+
   // Calculate random offsets once and never change them
   const randomOffsets = useMemo(() => {
+    // seed random offsets with shuffleId
     return deck.map(() => ({
       angle: Math.random() * Math.PI * 2,
       radius: Math.random(),
       rotation: Math.random() * 360,
     }));
-  }, [deck]);
+  }, [deck, shuffleId]);
 
   // Calculate final positions based on random offsets and window size
   const cardPositions = useMemo(() => {
@@ -81,6 +99,7 @@ export const TarotSpread: React.FC<TarotSpreadProps> = ({
 
   return (
     <motion.div
+      key={shuffleId}
       className="relative min-h-[70vh] w-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

@@ -17,11 +17,14 @@ export const useTarotDeck = () => {
   const [isReadingStarted, setIsReadingStarted] = useState(false);
 
   const shuffleDeck = useCallback(() => {
-    const reversedDeck = fullTarotDeck.map((card) => ({
+    console.log("Shuffling deck");
+    // spread operator to create new reference
+    const reversedDeck = [...fullTarotDeck].map((card) => ({
       ...card,
       reversed: Math.random() < 0.5,
     }));
-    setDeck(shuffleArray(reversedDeck));
+    const newDeck = [...shuffleArray(reversedDeck)];
+    setDeck(newDeck);
     setDrawnCards([]);
     setMaxCards(3);
     setQuestion("");
@@ -29,15 +32,18 @@ export const useTarotDeck = () => {
   }, []);
 
   const startReading = useCallback((newQuestion: string, cardCount: number) => {
-    shuffleDeck();
+    // shuffleDeck();
+    setIsReadingStarted(true);
     setQuestion(newQuestion);
     setMaxCards(cardCount);
-    setIsReadingStarted(true);
     setDrawnCards([]);
   }, []);
 
-  const resetDeck = useCallback(() => {
+  const resetReading = useCallback(() => {
     setDrawnCards([]);
+    // setMaxCards(3);
+    // setQuestion("");
+    // setIsReadingStarted(false);
   }, []);
 
   const drawCard = useCallback(
@@ -70,7 +76,7 @@ export const useTarotDeck = () => {
     drawCard,
     shuffleDeck,
     startReading,
-    resetDeck,
+    resetReading,
     question,
     maxCards,
     isReadingStarted,

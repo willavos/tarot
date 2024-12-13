@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import type { TarotCard } from "../types/tarot";
 import { ChevronUp, ChevronDown, Sparkles, Loader } from "lucide-react";
-import { interpretReading } from "../services/tarotService";
-import { useEffect, useState } from "react";
+import {
+  interpretReading,
+  interpretReadingStream,
+} from "../services/tarotService";
+import { useEffect, useRef, useState } from "react";
 import { UserInfo } from "./UserInfoForm";
 
 interface ReadingProps {
@@ -21,21 +24,42 @@ export const Reading: React.FC<ReadingProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [interpretation, setInterpretation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const streamIt = true;
 
   useEffect(() => {
     async function getInterpretation() {
       if (isReadingComplete && drawnCards.length > 0) {
         setIsLoading(true);
+        setInterpretation("");
+
+        abortControllerRef.current = new AbortController();
         try {
           const cardNames = drawnCards.map(
             (card) => card.name + (card.reversed ? " (reversed)" : ""),
           );
-          const result = await interpretReading(
-            cardNames,
-            question || "",
-            userInfo,
-          );
-          setInterpretation(result);
+
+          if (streamIt) {
+            const stream = interpretReadingStream(
+              cardNames,
+              question || "",
+              userInfo,
+            );
+
+            // Process each chunk
+            for await (const chunk of stream) {
+              setIsLoading(false);
+              setInterpretation((prev) => prev + chunk);
+            }
+          } else {
+            const response = await interpretReading(
+              cardNames,
+              question || "",
+              userInfo,
+            );
+
+            setInterpretation(response);
+          }
         } catch (error) {
           console.error("Error getting interpretation:", error);
         } finally {

@@ -18,12 +18,12 @@ function App() {
   const {
     deck,
     drawnCards,
-    resetDeck,
     drawCard,
-    shuffleDeck,
     startReading,
+    resetReading,
     question,
     maxCards,
+    shuffleDeck,
     isReadingComplete,
   } = useTarotDeck();
 
@@ -35,6 +35,14 @@ function App() {
       setStage("userInfo");
     }
   }, []);
+
+  useEffect(() => {
+    console.log("Stage changed to:", stage);
+  }, [stage]);
+
+  useEffect(() => {
+    console.log("Deck updated, length:", deck.length);
+  }, [deck]);
 
   const handleUserInfoComplete = (info: UserInfo) => {
     setUserInfo(info);
@@ -48,8 +56,8 @@ function App() {
 
   const handleQuestionSubmit = (question: string, maxCards: number) => {
     shuffleDeck();
-    startReading(question, maxCards);
     setStage("reading");
+    startReading(question, maxCards);
   };
 
   return (
@@ -70,7 +78,8 @@ function App() {
           <div
             className="flex items-center justify-center cursor-pointer"
             onClick={() => {
-              resetDeck();
+              console.log("Resetting reading...");
+              shuffleDeck();
               setStage("question");
             }}
           >
@@ -104,16 +113,15 @@ function App() {
       </AnimatePresence>
 
       <div className="relative">
-        <AnimatePresence mode="wait">
-          {stage === "reading" && (
-            <TarotSpread
-              deck={deck}
-              onCardClick={drawCard}
-              drawnPositions={drawnCards.map((card) => card.position)}
-              maxCards={maxCards}
-            />
-          )}
-        </AnimatePresence>
+        {stage === "reading" && deck.length > 0 && (
+          <TarotSpread
+            key={`tarot-spread-${stage}-${deck.length}`}
+            deck={deck}
+            onCardClick={drawCard}
+            drawnPositions={drawnCards.map((card) => card.position)}
+            maxCards={maxCards}
+          />
+        )}
 
         <AnimatePresence>
           {drawnCards.length > 0 && (
