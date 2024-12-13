@@ -64,7 +64,7 @@ A beautiful and interactive Tarot card reading application built with React and 
 - Tailwind CSS
 - Framer Motion
 - Lucide React Icons
-- Express + OpenAI API
+- Express + Groq API
 
 ## Getting Started
 
@@ -92,9 +92,9 @@ A beautiful and interactive Tarot card reading application built with React and 
    npm install
    ```
 
-3. Create .env file with your OpenAI API key:
+3. Create .env file with your Groq API key:
    ```
-   OPENAI_API_KEY=your_api_key_here
+   GROQ_API_KEY=your-api-key
    ```
 
 4. Start the server:
